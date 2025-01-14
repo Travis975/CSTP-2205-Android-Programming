@@ -9,6 +9,7 @@
 // Next layer: select category -> lbs - labs, pr - projects, ex - exams, r - return to main menu
 // User inputs: assessment name, earned marks, total marks
 // Then total mark for the student is made from the combination of each category
+
 // Category weights:
 // labs - 30%
 // projects - 40%
@@ -18,6 +19,9 @@
 // 1. You may not use an array to store the values
 // 2. Your solution must not use any user defined functions other than main().
 // ==============================================================================================
+
+import kotlin.math.roundToInt
+
 fun main() {
     println("Lab 1 Grade Calculator")
 
@@ -129,36 +133,38 @@ fun main() {
                 if (examReport.isNotEmpty()) println(examReport) else println("No exams entered.")
 
                 val labPercentage =
-                    if (totalPossibleLabsMarks > 0) (totalLabsMarksReceived / totalPossibleLabsMarks * 100) else 0.0
+                    if (totalPossibleLabsMarks > 0) ((totalLabsMarksReceived / totalPossibleLabsMarks) * 100) * LABS_WEIGHT else 0.0
                 println("\nLab Total: ${totalLabsMarksReceived}/${totalPossibleLabsMarks} Percentage: ${"%.2f".format(labPercentage)}%")
 
                 val projectPercentage =
-                    if (totalPossibleProjectsMarks > 0) (totalProjectsMarksReceived / totalPossibleProjectsMarks * 100) else 0.0
+                    if (totalPossibleProjectsMarks > 0) ((totalProjectsMarksReceived / totalPossibleProjectsMarks) * 100) * PROJECTS_WEIGHT else 0.0
                 println("Project Total: ${totalProjectsMarksReceived}/${totalPossibleProjectsMarks} Percentage: ${"%.2f".format(projectPercentage)}%")
 
                 val examPercentage =
-                    if (totalPossibleExamsMarks > 0) (totalExamsMarksReceived / totalPossibleExamsMarks * 100) else 0.0
+                    if (totalPossibleExamsMarks > 0) ((totalExamsMarksReceived / totalPossibleExamsMarks) * 100) * EXAMS_WEIGHT else 0.0
                 println("Exam Total: ${totalExamsMarksReceived}/${totalPossibleExamsMarks} Percentage: ${"%.2f".format(examPercentage)}%")
 
-                val coursePercentage = (labPercentage * LABS_WEIGHT) +
-                        (projectPercentage * PROJECTS_WEIGHT) +
-                        (examPercentage * EXAMS_WEIGHT)
-                println("\nCurrent Course Percentage: ${"%.2f".format(coursePercentage)}%")
+                val coursePercentage = (labPercentage + projectPercentage + examPercentage)
+
+                // First calculate the students total percentage then round to nearest whole number for the grade
+                val coursePercentageRounded = coursePercentage.roundToInt()
+
+                println("\nCurrent Course Percentage: ${coursePercentageRounded}%")
                 println(
                     "Current Letter Grade: ${
                         when {
                             // Was written as coursePercentage >= 81.0 && coursePercentage <= 85.0 -> "B+" 
                             // Then convert to range check ex. in (#>=..<=#) to simplify comparison. IDE suggested. 
-                            coursePercentage >= 96.0 -> "A+"
-                            coursePercentage in 91.0..95.99 -> "A"
-                            coursePercentage in 86.0..90.99 -> "A-"
-                            coursePercentage in 81.0..85.99 -> "B+"
-                            coursePercentage in 76.0..80.99 -> "B"
-                            coursePercentage in 71.0..75.99 -> "B-"
-                            coursePercentage in 66.0..70.99 -> "C+"
-                            coursePercentage in 61.0..65.99 -> "C"
-                            coursePercentage in 56.0..60.99 -> "C-"
-                            coursePercentage in 50.0..55.99 -> "D"
+                            coursePercentageRounded >= 96.0 -> "A+"
+                            coursePercentageRounded in 91..95 -> "A"
+                            coursePercentageRounded in 86..90 -> "A-"
+                            coursePercentageRounded in 81..85 -> "B+"
+                            coursePercentageRounded in 76..80 -> "B"
+                            coursePercentageRounded in 71..75 -> "B-"
+                            coursePercentageRounded in 66..70 -> "C+"
+                            coursePercentageRounded in 61..65 -> "C"
+                            coursePercentageRounded in 56..60 -> "C-"
+                            coursePercentageRounded in 50..55 -> "D"
                             else -> "F"
                         }
                     }"
